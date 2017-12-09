@@ -4,8 +4,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import com.pavel_kaminsky.googlehome_broadlink_bridge.firebase.FireBaseEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +46,26 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(FireBaseEvent event) {
+        Log.d("Main","EventBus event recieved");
+        mTextMessage.setText(event.getData());
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

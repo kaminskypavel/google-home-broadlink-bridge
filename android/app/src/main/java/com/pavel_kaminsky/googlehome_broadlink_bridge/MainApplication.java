@@ -8,6 +8,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pavel_kaminsky.googlehome_broadlink_bridge.firebase.FireBaseEvent;
+
+import org.greenrobot.eventbus.EventBus;
+
 import static android.content.ContentValues.TAG;
 
 public class MainApplication extends Application {
@@ -23,15 +27,14 @@ public class MainApplication extends Application {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
                 String value = dataSnapshot.getValue(String.class);
                 Log.d(TAG, "Value is: " + value);
+
+                EventBus.getDefault().post(new FireBaseEvent(value));
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
