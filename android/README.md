@@ -11,3 +11,4 @@
 - [ButterKnife](https://github.com/JakeWharton/butterknife)
 - [EventBus](https://github.com/greenrobot/EventBus)
 - [JitPack](https://github.com/jitpack/jitpack.io)
+- [Material Desing Icons](https://materialdesignicons.com/)

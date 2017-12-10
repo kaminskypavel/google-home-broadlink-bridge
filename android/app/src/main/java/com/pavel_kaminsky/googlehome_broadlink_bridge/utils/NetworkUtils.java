@@ -23,7 +23,7 @@ public class NetworkUtils {
 
             @Override
             public void onFinished(ArrayList<Device> devicesFound) {
-                Log.d("network onFinished", ToStringBuilder.reflectionToString(devicesFound));
+                Log.d("network onFinished", ToStringBuilder.reflectionToString(devicesFound.toArray()));
             }
         });
 

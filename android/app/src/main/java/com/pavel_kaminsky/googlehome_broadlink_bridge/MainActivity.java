@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
                     return true;
+
+                case R.id.navigation_setup:
+                    mTextMessage.setText(R.string.title_setup);
+                    return true;
             }
             return false;
         }
