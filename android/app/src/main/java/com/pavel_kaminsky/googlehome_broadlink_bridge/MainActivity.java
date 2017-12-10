@@ -1,14 +1,14 @@
 package com.pavel_kaminsky.googlehome_broadlink_bridge;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.pavel_kaminsky.googlehome_broadlink_bridge.firebase.FireBaseEvent;
+import com.pavel_kaminsky.googlehome_broadlink_bridge.firebase.Command;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,10 +48,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+    @SuppressLint("SetTextI18n")
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(FireBaseEvent event) {
-        Log.d("Main","EventBus event recieved");
-        mTextMessage.setText(event.getData());
+    public void onMessageEvent(Command event) {
+        mTextMessage.setText(mTextMessage.getText() + "\n [" + event.getDate() + "]" + event.getCommand());
     }
 
 

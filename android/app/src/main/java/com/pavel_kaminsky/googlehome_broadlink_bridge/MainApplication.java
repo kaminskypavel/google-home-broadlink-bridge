@@ -8,11 +8,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.pavel_kaminsky.googlehome_broadlink_bridge.firebase.FireBaseEvent;
+import com.pavel_kaminsky.googlehome_broadlink_bridge.firebase.Command;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.content.ContentValues.TAG;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 public class MainApplication extends Application {
 
@@ -20,17 +24,21 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        mDatabase.child("queue").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
 
-                EventBus.getDefault().post(new FireBaseEvent(value));
+                List<Command> commandsList = new ArrayList<>();
+
+                for (DataSnapshot commandsSnapshot : dataSnapshot.getChildren()) {
+                    commandsList.add(commandsSnapshot.getValue(Command.class));
+                }
+
+                if (!isEmpty(commandsList))
+                    EventBus.getDefault().post(commandsList.get(commandsList.size() - 1));
             }
 
             @Override
