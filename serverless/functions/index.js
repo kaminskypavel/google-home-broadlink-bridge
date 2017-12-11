@@ -19,15 +19,15 @@ const updateDatabase = (command) => {
 const app = express();
 app.use(cors());
 
-app.get('/start', (req, res) => {
-    updateDatabase("start").then(() =>
-        res.send("starting movie night"));
+app.get('/movie', (req, res) => {
+    updateDatabase("movie").then(() =>
+        res.send("Switching Movie Mode"));
 });
 
-app.get('/stop', (req, res) => {
-    updateDatabase("stop").then(() =>
-        res.send("stopping movie night"));
+app.get('/ac', (req, res) => {
+    updateDatabase("ac").then(() =>
+        res.send("Switching AC"));
 });
 
 
-exports.movieMode = functions.https.onRequest(app);
+exports.action = functions.https.onRequest(app);
