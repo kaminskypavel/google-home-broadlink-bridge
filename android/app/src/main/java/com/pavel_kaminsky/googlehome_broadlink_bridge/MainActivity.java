@@ -1,32 +1,29 @@
 package com.pavel_kaminsky.googlehome_broadlink_bridge;
 
-import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.github.mob41.blapi.BLDevice;
 import com.github.mob41.blapi.RM2Device;
 import com.github.mob41.blapi.mac.Mac;
-import com.pavel_kaminsky.googlehome_broadlink_bridge.firebase.Command;
+import com.pavel_kaminsky.googlehome_broadlink_bridge.fragments.logs.LogsFragment;
+import com.pavel_kaminsky.googlehome_broadlink_bridge.fragments.setup.SetupFragment;
+import com.pavel_kaminsky.googlehome_broadlink_bridge.models.ToastError;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.utils.NetworkUtils;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
-
-    @BindView(R.id.message)
-    TextView mTextMessage;
+public class MainActivity extends AppCompatActivity implements SetupFragment.OnFragmentInteractionListener, LogsFragment.OnFragmentInteractionListener {
 
     @BindView(R.id.navigation)
     BottomNavigationView navigation;
@@ -36,46 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
-                    return true;
-
-                case R.id.navigation_setup:
-                    mTextMessage.setText(R.string.title_setup);
-                    return true;
-            }
+            changeFragment(item.getItemId());
             return false;
         }
     };
-
-
-    @SuppressLint("SetTextI18n")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(Command event) {
-        mTextMessage.setText(mTextMessage.getText() + "\n [" + event.getDate() + "]" + event.getCommand());
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +44,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        changeFragment(R.id.navigation_setup);
 
-        NetworkUtils.scanNetwork();
+        //scan the network for filling the arp cache table
+        try {
+            NetworkUtils.scanNetwork();
+        } catch (Exception e) {
+            e.printStackTrace();
+            EventBus.getDefault().post(new ToastError("Can't Scan Network"));
+        }
 //        new DiscoverTask().execute();
+    }
+
+    private void changeFragment(int fragment_id) {
+
+        Fragment newFragment = null;
+        if (fragment_id == R.id.navigation_setup) {
+            newFragment = new SetupFragment();
+        } else {
+            newFragment = new LogsFragment();
+        }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, newFragment)
+                .commit();
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
 

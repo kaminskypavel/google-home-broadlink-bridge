@@ -12,8 +12,12 @@ import java.util.ArrayList;
 
 public class NetworkUtils {
 
-    public static void scanNetwork() {
-        SubnetDevices.fromLocalAddress().findDevices(new SubnetDevices.OnSubnetDeviceFound() {
+    public static void scanNetwork() throws Exception {
+        SubnetDevices
+                .fromLocalAddress()
+                .setTimeOutMillis(5000)
+                .setNoThreads(10)
+                .findDevices(new SubnetDevices.OnSubnetDeviceFound() {
             @Override
             public void onDeviceFound(Device device) {
                 Log.d("network onDeviceFound", ToStringBuilder.reflectionToString(device));
@@ -26,6 +30,10 @@ public class NetworkUtils {
                 Log.d("network onFinished", ToStringBuilder.reflectionToString(devicesFound.toArray()));
             }
         });
+    }
 
+    public static String MAC2IP(String mac) {
+        String ipAddress = ARPInfo.getIPAddressFromMAC(mac);
+        return ipAddress;
     }
 }

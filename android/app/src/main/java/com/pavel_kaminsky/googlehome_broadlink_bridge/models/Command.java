@@ -1,4 +1,4 @@
-package com.pavel_kaminsky.googlehome_broadlink_bridge.firebase;
+package com.pavel_kaminsky.googlehome_broadlink_bridge.models;
 
 import java.io.Serializable;
 

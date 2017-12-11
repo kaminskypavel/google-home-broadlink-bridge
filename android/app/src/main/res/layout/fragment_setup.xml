@@ -1,0 +1,35 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pavel_kaminsky.googlehome_broadlink_bridge.fragments.setup.SetupFragment">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/macTextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="MAC (34:e2:14:88:f8:00)"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/pingButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test Connection" />
+
+    </LinearLayout>
+
+</FrameLayout>
