@@ -15,10 +15,6 @@ import com.github.mob41.blapi.RM2Device;
 import com.github.mob41.blapi.mac.Mac;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.fragments.logs.LogsFragment;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.fragments.setup.SetupFragment;
-import com.pavel_kaminsky.googlehome_broadlink_bridge.models.ToastError;
-import com.pavel_kaminsky.googlehome_broadlink_bridge.utils.NetworkUtils;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,15 +41,6 @@ public class MainActivity extends AppCompatActivity implements SetupFragment.OnF
         ButterKnife.bind(this);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         changeFragment(R.id.navigation_setup);
-
-        //scan the network for filling the arp cache table
-        try {
-            NetworkUtils.scanNetwork();
-        } catch (Exception e) {
-            e.printStackTrace();
-            EventBus.getDefault().post(new ToastError("Can't Scan Network"));
-        }
-//        new DiscoverTask().execute();
     }
 
     private void changeFragment(int fragment_id) {

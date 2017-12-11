@@ -12,3 +12,4 @@
 - [EventBus](https://github.com/greenrobot/EventBus)
 - [JitPack](https://github.com/jitpack/jitpack.io)
 - [Material Desing Icons](https://materialdesignicons.com/)
+- [Lottie](https://github.com/airbnb/lottie-android)

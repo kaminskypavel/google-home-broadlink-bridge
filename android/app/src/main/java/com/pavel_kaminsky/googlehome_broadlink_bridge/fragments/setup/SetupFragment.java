@@ -1,5 +1,7 @@
 package com.pavel_kaminsky.googlehome_broadlink_bridge.fragments.setup;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieComposition;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.R;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.models.ToastError;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.utils.NetworkUtils;
@@ -32,11 +36,14 @@ public class SetupFragment extends Fragment {
     @BindView(R.id.macTextField)
     EditText macTextField;
 
+    @BindView(R.id.animation_view)
+    LottieAnimationView animationView;
+
     public SetupFragment() {
     }
 
     @OnClick(R.id.pingButton)
-    public void pingDevice(Button button) {
+    public void pingDevice() {
         String mac = macTextField.getText().toString();
         boolean isValid = StringUtils.validateMAC(mac);
 
@@ -45,13 +52,26 @@ public class SetupFragment extends Fragment {
         }
 
         try {
-            String ip = NetworkUtils.MAC2IP(mac);
-
+            showAnimation("scanning.json");
+            NetworkUtils.scanNetwork(devices -> {
+                String ip = NetworkUtils.MAC2IP(mac);
+                String fileName = ip != null ? "done.json" : "fail.json";
+                showAnimation(fileName);
+            });
         } catch (Exception e) {
             e.printStackTrace();
             EventBus.getDefault().post(new ToastError("Can't Connect To Device"));
         }
 
+
+    }
+
+    private void showAnimation(String filename) {
+        animationView.setVisibility(View.VISIBLE);
+        LottieComposition.Factory.fromAssetFileName(getContext(), filename, (composition) -> {
+            animationView.setComposition(composition);
+            animationView.playAnimation();
+        });
     }
 
     @Override
@@ -65,6 +85,12 @@ public class SetupFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_setup, container, false);
         ButterKnife.bind(this, view);
         macTextField.setText("34:ea:34:88:f8:61");
+        animationView.addAnimatorListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animationView.setVisibility(View.GONE);
+            }
+        });
         return view;
     }
 
