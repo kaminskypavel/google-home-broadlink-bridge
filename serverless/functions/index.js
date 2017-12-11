@@ -11,7 +11,7 @@ const updateDatabase = (command) => {
         const queueRef = admin.database().ref('/queue');
 
         queueRef
-            .push({date, command})
+            .set({date, command})
             .then(res);
     });
 };
