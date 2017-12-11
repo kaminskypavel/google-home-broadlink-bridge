@@ -17,11 +17,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static android.content.ContentValues.TAG;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 public class MainApplication extends Application {
 
@@ -31,18 +27,16 @@ public class MainApplication extends Application {
         super.onCreate();
         EventBus.getDefault().register(this);
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("queue").addValueEventListener(new ValueEventListener() {
+        DatabaseReference queue = mDatabase.child("queue");
+
+        queue.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                List<Command> commandsList = new ArrayList<>();
-
-                for (DataSnapshot commandsSnapshot : dataSnapshot.getChildren()) {
-                    commandsList.add(commandsSnapshot.getValue(Command.class));
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    Command command = dataSnapshot.getValue(Command.class);
+                    EventBus.getDefault().post(command);
+                    queue.setValue(null);
                 }
-
-                if (!isEmpty(commandsList))
-                    EventBus.getDefault().post(commandsList.get(commandsList.size() - 1));
             }
 
             @Override
