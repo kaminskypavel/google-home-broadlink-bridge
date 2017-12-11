@@ -16,7 +16,6 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieComposition;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.R;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.models.ToastError;
-import com.pavel_kaminsky.googlehome_broadlink_bridge.utils.NetworkUtils;
 import com.pavel_kaminsky.googlehome_broadlink_bridge.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,34 +48,24 @@ public class SetupFragment extends Fragment {
 
         if (!isValid) {
             macTextField.setError("Invalid mac");
+            return;
         }
 
         try {
             showAnimation("scanning.json");
-            NetworkUtils.scanNetwork(devices -> {
-                String ip = NetworkUtils.MAC2IP(mac);
-                String fileName = ip != null ? "done.json" : "fail.json";
-                showAnimation(fileName);
-            });
         } catch (Exception e) {
             e.printStackTrace();
             EventBus.getDefault().post(new ToastError("Can't Connect To Device"));
         }
-
-
     }
 
     private void showAnimation(String filename) {
         animationView.setVisibility(View.VISIBLE);
         LottieComposition.Factory.fromAssetFileName(getContext(), filename, (composition) -> {
+            assert composition != null;
             animationView.setComposition(composition);
             animationView.playAnimation();
         });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     @Override
